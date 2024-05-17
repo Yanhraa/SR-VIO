@@ -1,0 +1,21 @@
+<launch>
+    <arg name="robot" default="kitti"/>
+    <arg name="calibration_file"
+        default="$(find msckf_vio)/config/camchain-imucam-kitti-0057.yaml"/>
+    <!-- Semantic Nodelet -->
+    <group ns="$(arg robot)">
+        <node pkg="nodelet" type="nodelet" name="semantic"
+            args="standalone msckf_vio/SemanticNodelet"
+            output="screen">
+            <!-- Calibration parameters -->
+            <rosparam command="load" file="$(arg calibration_file)"/>
+
+            <param name="net_Path" type="str" value="/home/r/src/msckf_ws/src/msckf_vio/Thirdparty/yolo_model/best.onnx"/>
+
+            <remap from="~cam0_rgb_image" to="image_processor/cam0_rgb_image"/>
+            <!-- <remap from="~cam1_rgb_image" to="image_processor/cam1_rgb_image"/> -->
+            <!-- <remap from="~cam0_rgb_image" to="/kitti/camera_color_left/image_raw"/> -->
+            <remap from="~features" to="image_processor/features"/>
+        </node>
+    </group>
+</launch>
